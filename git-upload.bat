@@ -17,16 +17,18 @@ echo [輸入範例]
 echo Repo URL: https://github.com/username/wheel-tool.git
 echo.
 
-:: 1. 檢查 Git 是否初始化
+:: 1. Check Git Init
 if not exist ".git" (
     echo [進度] 偵測到尚未初始化 Git，正在執行 git init...
     git init
-    echo [完成] Git 初始化成功。
+    git branch -M main
+    echo [完成] Git 初始化成功並設定分支為 main。
 ) else (
     echo [進度] Git 已在當前資料夾初始化。
+    git branch -M main
 )
 
-:: 2. 提示輸入 GitHub Repo URL
+:: 2. Input Repo URL
 echo.
 set "EXISTING_URL="
 for /f "tokens=*" %%i in ('git remote get-url origin 2^>nul') do set "EXISTING_URL=%%i"
@@ -45,7 +47,7 @@ if "!REPO_URL!"=="" (
     exit /b
 )
 
-:: 自動解析 URL 以獲得使用者名稱和倉庫名稱
+:: Parse URL for User and Repo
 set "URL_CLEAN=!REPO_URL!"
 set "URL_CLEAN=!URL_CLEAN:.git=!"
 
@@ -54,7 +56,7 @@ for /f "tokens=4,5 delims=/" %%a in ("!URL_CLEAN!") do (
     set "GH_REPO=%%b"
 )
 
-:: 3. 設定 Remote (僅在 URL 改變時更新)
+:: 3. Set Remote
 echo.
 if not "!REPO_URL!"=="!EXISTING_URL!" (
     echo [進度] 正在更新遠端倉庫設定...
@@ -71,13 +73,13 @@ echo [進度] 正在加入檔案變更...
 git add .
 echo [完成] 檔案已加入。
 
-:: 5. 提示輸入 Commit Message
+:: 5. Commit Message
 echo.
 set "COMMIT_MSG=更新小工具"
 set /p INPUT_MSG="請輸入 Commit Message [預設: 更新小工具]: "
 if not "!INPUT_MSG!"=="" set "COMMIT_MSG=!INPUT_MSG!"
 
-:: 執行 Commit
+:: Execute Commit
 echo.
 echo [進度] 正在提交變更...
 git commit -m "!COMMIT_MSG!"
@@ -88,18 +90,16 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 :PUSH_RETRY
-:: 6. 提示輸入 Username 和 Password (隱藏輸入)
+:: 6. Credentials
 echo.
 set /p GH_USERNAME="請輸入 GitHub Username: "
 echo 請輸入 GitHub Password 或 Personal Access Token (輸入時不會顯示內容):
 for /f "delims=" %%i in ('powershell -Command "$p = read-host -assecurestring; $marshal = [System.Runtime.InteropServices.Marshal]; $marshal::PtrToStringAuto($marshal::SecureStringToBSTR($p))"') do set "GH_PASS=%%i"
 
-:: 7. 推送到 Main Branch
+:: 7. Push to Main
 echo.
 echo [進度] 正在推送到 GitHub main 分支...
 echo --------------------------------------------------
-:: 使用憑證組合 URL 進行推送
-:: 移除了 >nul 以便看到進度與錯誤
 set "PUSH_URL=!REPO_URL:https://=!"
 git push -u "https://!GH_USERNAME!:!GH_PASS!@!PUSH_URL!" main
 
@@ -123,9 +123,9 @@ if %ERRORLEVEL% EQU 0 (
     echo.
     echo [錯誤] 推送失敗！
     echo 可能原因：
-    echo 1. GitHub Username 或 Password/Token 輸入錯誤
-    echo 2. 網路連線中斷
-    echo 3. 該 Repo 不存在或您沒有權限
+    echo 1. GitHub 帳號或密碼輸入錯誤
+    echo 2. 網路連線問題
+    echo 3. 該 Repo 權限不足
     echo.
     set /p RETRY_CHOICE="是否要重新輸入帳號密碼並重試？ (Y/N): "
     if /i "!RETRY_CHOICE!"=="Y" (
