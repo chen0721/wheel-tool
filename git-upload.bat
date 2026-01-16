@@ -97,27 +97,41 @@ for /f "delims=" %%i in ('powershell -Command "$p = read-host -assecurestring; $
 :: 7. 推送到 Main Branch
 echo.
 echo [進度] 正在推送到 GitHub main 分支...
+echo --------------------------------------------------
 :: 使用憑證組合 URL 進行推送
+:: 移除了 >nul 以便看到進度與錯誤
 set "PUSH_URL=!REPO_URL:https://=!"
 git push -u "https://!GH_USERNAME!:!GH_PASS!@!PUSH_URL!" main
 
 if %ERRORLEVEL% EQU 0 (
+    echo --------------------------------------------------
     echo.
-    echo ========================================
+    echo ****************************************
     echo   上傳成功！
+    echo ****************************************
+    echo.
+    echo [預覽網站網址] 
+    echo https://!GH_USER!.github.io/!GH_REPO!/
+    echo.
+    echo [提醒] 
+    echo 記得 GitHub Settings ^> Pages 啟用 main branch
+    echo.
     echo ========================================
-    echo 預覽網站網址: https://!GH_USER!.github.io/!GH_REPO!/
-    echo.
-    echo 提醒：請記得在 GitHub 倉庫的 [Settings] ^> [Pages] 
-    echo       將 [Branch] 設定為 [main] 並存檔，才能啟用網頁。
+    echo 操作已完成，請按任意鍵關閉視窗。
 ) else (
+    echo --------------------------------------------------
     echo.
-    echo [錯誤] 推送失敗，可能是帳號密碼錯誤或網路問題。
+    echo [錯誤] 推送失敗！
+    echo 可能原因：
+    echo 1. GitHub Username 或 Password/Token 輸入錯誤
+    echo 2. 網路連線中斷
+    echo 3. 該 Repo 不存在或您沒有權限
+    echo.
     set /p RETRY_CHOICE="是否要重新輸入帳號密碼並重試？ (Y/N): "
     if /i "!RETRY_CHOICE!"=="Y" (
         goto PUSH_RETRY
     ) else (
-        echo [資訊] 已取消重試。
+        echo [資訊] 操作已結束。
     )
 )
 
