@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+﻿<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,115 +12,81 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            max-width: 1400px;
-            width: 100%;
             background: white;
-            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
         }
 
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-                max-width: 600px;
-            }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         h1 {
-            grid-column: 1 / -1;
-            text-align: center;
             color: #333;
-            margin-bottom: 30px;
             font-size: 32px;
+            margin-bottom: 10px;
         }
 
-        .left-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+        .subtitle {
+            color: #666;
+            font-size: 14px;
         }
 
-        .right-panel {
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .wheel-section {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
+            justify-content: center;
         }
 
         .wheel-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
             position: relative;
-            margin-bottom: 20px;
+            width: 300px;
+            height: 300px;
         }
 
-        canvas {
-            max-width: 100%;
-            height: auto;
-            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+        #wheel {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
         }
 
-        .wheel-pin {
+        .wheel-pointer {
             position: absolute;
-            top: -15px;
-            font-size: 30px;
+            top: 50%;
+            right: -15px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-right: 20px solid #667eea;
             z-index: 10;
         }
 
-        .section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .section h2 {
-            color: #333;
-            font-size: 18px;
-            margin-bottom: 15px;
+        .controls-section {
             display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section h2::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 2px;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 14px;
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .control-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            align-items: flex-end;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .input-group {
@@ -130,24 +96,31 @@
         }
 
         label {
-            color: #555;
-            font-weight: 500;
+            font-weight: 600;
+            color: #333;
             font-size: 14px;
         }
 
-        input[type="number"],
-        input[type="text"] {
-            padding: 10px 12px;
-            border: 1px solid #ddd;
+        input[type="text"],
+        textarea {
+            padding: 12px;
+            border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
         }
 
-        input[type="number"]:focus,
-        input[type="text"]:focus {
+        input[type="text"]:focus,
+        textarea:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
         }
 
         .button-group {
@@ -163,1032 +136,498 @@
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            transition: all 0.3s;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            grid-column: 1 / -1;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background: #e0e0e0;
+            background: #f0f0f0;
             color: #333;
         }
 
         .btn-secondary:hover {
-            background: #d0d0d0;
+            background: #e0e0e0;
         }
 
-        .btn-danger {
-            background: #ff6b6b;
-            color: white;
+        .btn-full {
+            grid-column: 1 / -1;
         }
 
-        .btn-danger:hover {
-            background: #ff5252;
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
         }
 
-        .results-section {
-            max-height: 400px;
-            overflow-y: auto;
+        .result-section.show {
+            display: block;
         }
 
-        .result-item {
-            background: white;
-            padding: 12px;
+        .result-label {
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
             margin-bottom: 8px;
+        }
+
+        .result-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .info-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e7f3ff;
             border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .info-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .history-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
             border-radius: 4px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            border-left: 3px solid #667eea;
         }
 
-        .result-number {
-            font-weight: 600;
-            color: #667eea;
-            min-width: 30px;
-        }
-
-        .result-name {
-            flex: 1;
-            margin: 0 15px;
-            color: #333;
-        }
-
-        .result-time {
+        .history-count {
+            font-size: 12px;
             color: #999;
-            font-size: 12px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .stat-box {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            text-align: center;
-        }
-
-        .stat-label {
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .stat-value {
-            font-size: 24px;
             font-weight: 600;
-            color: #667eea;
         }
 
-        .empty-state {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-            font-size: 14px;
-        }
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
+            .container {
+                padding: 20px;
+            }
 
-        .modal.active {
-            display: flex;
-        }
+            h1 {
+                font-size: 24px;
+            }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-content h3 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .modal-content input {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .modal-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .color-picker {
-            width: 100%;
-            height: 100px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 10px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #e0e0e0;
-            border-radius: 2px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* 進階功能頁籤樣式 */
-        .tabs-container {
-            grid-column: 1 / -1;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 20px;
-        }
-
-        .tabs-header {
-            display: flex;
-            gap: 0;
-            background: #f8f9fa;
-            border-radius: 12px 12px 0 0;
-            overflow: hidden;
-        }
-
-        .tab-button {
-            flex: 1;
-            padding: 15px 20px;
-            border: none;
-            background: #f8f9fa;
-            color: #666;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 13px;
-        }
-
-        .tab-button:hover {
-            background: #f0f1f3;
-        }
-
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-            background: white;
-        }
-
-        .tabs-content {
-            display: none;
-            background: white;
-            border-radius: 0 0 12px 12px;
-            border: 1px solid #e0e0e0;
-            border-top: none;
-            padding: 20px;
-            grid-column: 1 / -1;
-        }
-
-        .tabs-content.active {
-            display: block;
-        }
-
-        .advanced-option {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .advanced-option:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-
-        .option-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .option-description {
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 10px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .audio-control {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .audio-control-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .audio-control-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .audio-label {
-            font-size: 12px;
-            color: #666;
-        }
-
-        input[type="file"] {
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .audio-button {
-            padding: 8px 12px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .audio-button:hover {
-            background: #f0f1f3;
-        }
-
-        .btn-reset-audio {
-            padding: 8px 16px;
-            background: #e0e0e0;
-            color: #333;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-
-        .btn-reset-audio:hover {
-            background: #d0d0d0;
-        }
-
-        .info-badge {
-            display: inline-block;
-            background: #fff3cd;
-            color: #856404;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            margin-left: 8px;
+            .wheel-container {
+                width: 250px;
+                height: 250px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎡 轉盤抽籤工具</h1>
-
-        <div class="left-panel">
-            <!-- 轉盤 -->
-            <div class="section">
-                <div class="wheel-container">
-                    <canvas id="wheel" width="300" height="300"></canvas>
-                    <div class="wheel-pin">▼</div>
-                </div>
-            </div>
-
-            <!-- 項目編輯 -->
-            <div class="section">
-                <h2>編輯項目</h2>
-                <textarea id="items" placeholder="每行輸入一個項目，例如：&#10;小明&#10;小紅&#10;小美&#10;..."></textarea>
-                <button class="btn-primary" onclick="initWheel()">更新轉盤</button>
+        <div class="header">
+            <h1>🎡 轉盤工具</h1>
+            <p class="subtitle">新增選項、旋轉轉盤、決定結果</p>
+            
+            <!-- 音量控制 -->
+            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <button id="audioToggle" onclick="toggleBackgroundMusic()" style="padding: 6px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">🔇 開啟音樂</button>
+                <span style="font-size: 12px; color: #666;">背景音樂</span>
+                <input type="range" id="volumeControl" min="0" max="100" value="50" style="width: 150px;" onchange="updateVolume()">
+                <span id="volumeLabel" style="font-size: 12px; color: #666; width: 30px;">50%</span>
             </div>
         </div>
 
-        <div class="right-panel">
-            <!-- 抽籤控制 -->
-            <div class="section">
-                <h2>抽籤設置</h2>
-                <div class="control-group">
-                    <div class="input-group">
-                        <label>抽籤次數 (1-99)</label>
-                        <input type="number" id="times" min="1" max="99" value="1">
-                    </div>
-                    <button class="btn-primary" onclick="startAutoSpin()" style="grid-column: 1 / -1; margin-top: 8px;">開始自動抽籤</button>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress"></div>
-                </div>
-                <div class="button-group" style="margin-top: 15px;">
-                    <button class="btn-secondary" onclick="manualSpin()">手動旋轉一次</button>
-                    <button class="btn-danger" onclick="clearResults()">清空結果</button>
-                </div>
-                <div style="margin-top: 12px; padding: 12px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
-                    <p style="font-size: 12px; color: #856404; margin-bottom: 10px;">
-                        💡 <strong>重要提示</strong>：轉盤會保留旋轉位置。只有在以下情況會重置：
-                        <ul style="margin: 5px 0 0 20px; padding: 0;">
-                            <li>啟用「抽選後移除項目」並開始新週期</li>
-                            <li>點擊下方「重設轉盤」按鈕</li>
-                        </ul>
-                    </p>
-                    <button class="btn-secondary" onclick="resetWheelPosition()" style="grid-column: 1 / -1; width: 100%; background: #ffc107; color: #333; margin-top: 8px;">🔄 重設轉盤位置到 0°</button>
+        <div class="main-content">
+            <div class="wheel-section">
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel"></canvas>
                 </div>
             </div>
 
-            <!-- 統計數據 -->
-            <div class="section">
-                <h2>統計信息</h2>
-                <div class="stats">
-                    <div class="stat-box">
-                        <div class="stat-label">總抽籤次數</div>
-                        <div class="stat-value" id="total-count">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">項目數量</div>
-                        <div class="stat-value" id="item-count">0</div>
+            <div class="controls-section">
+                <div class="result-section" id="resultSection">
+                    <div class="result-label">最新結果</div>
+                    <div class="result-text" id="resultText">-</div>
+                    <div id="continuousProgress" style="display: none; margin-top: 10px; font-size: 12px; color: #666;"></div>
+                </div>
+
+                <button class="btn-primary btn-full" onclick="spinWheel()">開始抽選</button>
+
+                <div class="input-group">
+                    <label for="continuousCount">連續抽選</label>
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px;">
+                        <input type="number" id="continuousCount" min="0" max="999" value="0" placeholder="輸入次數">
+                        <button class="btn-primary" onclick="startContinuousSpin()" style="width: 100px;">開始</button>
                     </div>
                 </div>
-            </div>
 
-            <!-- 結果列表 -->
-            <div class="section">
-                <h2>抽籤結果</h2>
-                <div class="results-section" id="results">
-                    <div class="empty-state">還沒有抽籤結果</div>
+                <div class="info-section">
+                    <div class="info-title">📋 結果紀錄</div>
+                    <div id="resultHistory" style="max-height: 200px; overflow-y: auto; margin-top: 10px;">
+                        <div style="color: #999; text-align: center; padding: 20px;">尚無紀錄</div>
+                    </div>
+                    <button class="btn-secondary btn-full" onclick="clearHistory()" style="margin-top: 10px;">清空紀錄</button>
                 </div>
-            </div>
 
-            <!-- 進階功能頁籤 -->
-            <div class="tabs-container">
-                <div class="tabs-header">
-                    <button class="tab-button" onclick="switchTab(0)">⚙️ 進階功能</button>
+                <div class="input-group">
+                    <label for="itemsList">選項列表（每行一個，可修改）</label>
+                    <textarea id="itemsList" placeholder="選項1&#10;選項2&#10;選項3"></textarea>
                 </div>
-                
-                <div class="tabs-content">
-                    <!-- 選項1: 移除已抽中 -->
-                    <div class="advanced-option">
-                        <div class="option-title">
-                            ✂️ 抽選後移除項目
-                            <span class="info-badge">實驗性功能</span>
-                        </div>
-                        <div class="option-description">啟用此選項後，被抽中的項目將從轉盤中移除，直到您重置列表</div>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="removeSelected" onchange="updateAdvancedSettings()">
-                            <label for="removeSelected">啟用移除功能</label>
-                        </div>
-                    </div>
 
-                    <!-- 選項2: 轉盤效果音 -->
-                    <div class="advanced-option">
-                        <div class="option-title">🔊 轉盤效果音</div>
-                        <div class="option-description">當轉盤跨過選項交界點時觸發</div>
-                        <div class="audio-control">
-                            <div class="audio-control-row">
-                                <span class="audio-label">音效文件</span>
-                                <input type="file" id="wheelAudio" accept="audio/*" onchange="handleAudioUpload('wheelAudio')">
-                            </div>
-                            <div class="audio-control-row">
-                                <button class="audio-button" onclick="playPreview('wheelAudio')">🔉 試聽</button>
-                                <button class="audio-button" onclick="resetAudio('wheelAudio')">重置</button>
-                            </div>
-                        </div>
-                        <button class="btn-reset-audio" onclick="resetAllAudio('wheelAudio')">恢復預設值</button>
-                    </div>
+                <button class="btn-secondary btn-full" onclick="loadFromTextarea()">更新選項</button>
 
-                    <!-- 選項3: 中獎效果音 -->
-                    <div class="advanced-option">
-                        <div class="option-title">🎉 中獎效果音</div>
-                        <div class="option-description">轉盤停止後觸發（普通/連抽效果分離）</div>
-                        
-                        <div style="margin-bottom: 15px;">
-                            <div style="font-weight: 500; color: #555; margin-bottom: 8px; font-size: 13px;">普通中獎音效</div>
-                            <div class="audio-control">
-                                <div class="audio-control-row">
-                                    <span class="audio-label">音效文件</span>
-                                    <input type="file" id="normalWinAudio" accept="audio/*" onchange="handleAudioUpload('normalWinAudio')">
-                                </div>
-                                <div class="audio-control-row">
-                                    <button class="audio-button" onclick="playPreview('normalWinAudio')">🔉 試聽</button>
-                                    <button class="audio-button" onclick="resetAudio('normalWinAudio')">重置</button>
-                                </div>
-                            </div>
-                            <button class="btn-reset-audio" onclick="resetAllAudio('normalWinAudio')">恢復預設值</button>
-                        </div>
-
-                        <div>
-                            <div style="font-weight: 500; color: #555; margin-bottom: 8px; font-size: 13px;">連抽最後中獎音效 <span class="info-badge">特殊</span></div>
-                            <div class="audio-control">
-                                <div class="audio-control-row">
-                                    <span class="audio-label">音效文件</span>
-                                    <input type="file" id="bonusWinAudio" accept="audio/*" onchange="handleAudioUpload('bonusWinAudio')">
-                                </div>
-                                <div class="audio-control-row">
-                                    <button class="audio-button" onclick="playPreview('bonusWinAudio')">🔉 試聽</button>
-                                    <button class="audio-button" onclick="resetAudio('bonusWinAudio')">重置</button>
-                                </div>
-                            </div>
-                            <button class="btn-reset-audio" onclick="resetAllAudio('bonusWinAudio')">恢復預設值</button>
-                        </div>
-                    </div>
-
-                    <!-- 選項4: 背景樂 -->
-                    <div class="advanced-option">
-                        <div class="option-title">🎵 背景樂</div>
-                        <div class="option-description">循環播放，轉盤旋轉時播放</div>
-                        <div class="audio-control">
-                            <div class="audio-control-row">
-                                <span class="audio-label">音效文件</span>
-                                <input type="file" id="bgmAudio" accept="audio/*" onchange="handleAudioUpload('bgmAudio')">
-                            </div>
-                            <div class="audio-control-row">
-                                <button class="audio-button" onclick="playPreview('bgmAudio')">🔉 試聽</button>
-                                <button class="audio-button" onclick="resetAudio('bgmAudio')">重置</button>
-                            </div>
-                            <div style="margin-top: 10px;">
-                                <input type="checkbox" id="bgmEnabled" onchange="updateAdvancedSettings()">
-                                <label for="bgmEnabled">啟用背景樂</label>
-                            </div>
-                        </div>
-                        <button class="btn-reset-audio" onclick="resetAllAudio('bgmAudio')">恢復預設值</button>
-                    </div>
+                <div class="info-section">
+                    <div class="info-title">💡 使用提示</div>
+                    <ul style="margin-left: 20px;">
+                        <li>點擊「開始抽選」開始轉盤</li>
+                        <li>可在列表中編輯選項，點擊「更新選項」刷新</li>
+                        <li>轉盤停止時，指針指向的就是結果</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 全局變數
-        let items = ['小明', '小紅', '小美', '小王', '小李'];
-        let originalItems = [...items]; // 保存原始列表
-        let colors = [];
-        let results = [];
+        const canvas = document.getElementById('wheel');
+        const ctx = canvas.getContext('2d');
+        const itemsTextarea = document.getElementById('itemsList');
+
+        // 設置 canvas 尺寸
+        function resizeCanvas() {
+            const size = canvas.parentElement.offsetWidth;
+            canvas.width = size;
+            canvas.height = size;
+            if (!isSpinning) {
+                drawWheel();
+            }
+        }
+
+        let items = ['選項1', '選項2', '選項3'];
         let isSpinning = false;
-        let currentRotation = 0;
-        let currentSpinCount = 0;
-        let totalSpinCount = 0;
+        let rotation = 0;
+        let resultHistory = [];
+        let isContinuousSpinning = false;
+        let continuousSpinCount = 0;
+        let continuousSpinTotal = 0;
+        let lastTickIndex = -1;
 
-        // 音頻物件
-        const audioElements = {
-            wheel: new Audio(),
-            normalWin: new Audio(),
-            bonusWin: new Audio(),
-            bgm: new Audio()
-        };
+        // 顏色列表
+        const colors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1',
+            '#FFA07A', '#98D8C8', '#F7DC6F',
+            '#BB8FCE', '#85C1E2', '#F8B88B',
+            '#AED6F1', '#F5B7B1', '#D7BDE2'
+        ];
 
-        // 音頻預設值
-        const defaultAudioPaths = {
-            wheel: 'Wheel Tool Sound/Wheel Tool Sound.wav',
-            normalWin: 'Wheel Tool Sound/Success Ding.wav',
-            bonusWin: 'Wheel Tool Sound/Bonus Win.mp3',
-            bgm: 'Wheel Tool Sound/Wheel Background Music.wav'
-        };
-
-        // 預設音檔 Base64 編碼（小型音檔）
-        const defaultAudioBase64 = {
-            wheel: null,  // 將在初始化時從文件加載
-            normalWin: null,
-            bonusWin: null,
-            bgm: null
-        };
-
-        // 進階設置
-        let advancedSettings = {
-            removeSelected: false,
-            bgmEnabled: false,
-            wheelAudioEnabled: true,
-            winAudioEnabled: true
-        };
-
-        // 初始化顏色
-        function generateColors(count) {
-            const hues = [];
-            for (let i = 0; i < count; i++) {
-                hues.push((i * 360) / count);
-            }
-            return hues.map(hue => `hsl(${hue}, 70%, 50%)`);
+        function getColor(index) {
+            return colors[index % colors.length];
         }
 
-        // 切換進階功能頁籤
-        function switchTab(tabIndex) {
-            const buttons = document.querySelectorAll('.tab-button');
-            const contents = document.querySelectorAll('.tabs-content');
-            
-            buttons.forEach((btn, idx) => {
-                btn.classList.toggle('active', idx === tabIndex);
-            });
-            
-            contents.forEach((content, idx) => {
-                content.classList.toggle('active', idx === tabIndex);
-            });
-        }
-
-        // 初始化轉盤
-        function initWheel() {
-            const textarea = document.getElementById('items');
-            const newItems = textarea.value
-                .split('\n')
-                .map(item => item.trim())
-                .filter(item => item.length > 0);
-
-            if (newItems.length === 0) {
-                alert('請至少輸入一個項目');
-                return;
-            }
-
-            if (newItems.length > 99) {
-                alert('項目數量不能超過99個');
-                return;
-            }
-
-            items = newItems;
-            originalItems = [...items]; // 保存原始列表
-            colors = generateColors(items.length);
-            document.getElementById('item-count').textContent = items.length;
-            drawWheel();
-        }
-
-        // 繪製轉盤
         function drawWheel() {
-            const canvas = document.getElementById('wheel');
-            const ctx = canvas.getContext('2d');
-            const radius = canvas.width / 2;
+            if (items.length === 0) return;
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
             const sliceAngle = (Math.PI * 2) / items.length;
 
             // 清空畫布
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = '#fff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 保存當前旋轉角度
-            ctx.save();
-            ctx.translate(radius, radius);
-            ctx.rotate(currentRotation);
-
-            // 繪製扇形
+            // 繪製轉盤
             for (let i = 0; i < items.length; i++) {
-                const startAngle = i * sliceAngle;
-                const endAngle = (i + 1) * sliceAngle;
-
                 // 繪製扇形
-                ctx.fillStyle = colors[i];
                 ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.arc(0, 0, radius * 0.9, startAngle, endAngle);
-                ctx.closePath();
+                ctx.arc(centerX, centerY, radius, rotation + i * sliceAngle, rotation + (i + 1) * sliceAngle);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = getColor(i);
                 ctx.fill();
 
                 // 繪製邊框
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
                 ctx.stroke();
 
                 // 繪製文字
                 ctx.save();
-                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.translate(centerX, centerY);
+                ctx.rotate(rotation + (i + 0.5) * sliceAngle);
                 ctx.textAlign = 'right';
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 14px Arial';
-                ctx.fillText(items[i], radius * 0.75, 5);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText(items[i], radius - 30, 5);
                 ctx.restore();
             }
 
             // 繪製中心圓
-            ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(0, 0, radius * 0.15, 0, Math.PI * 2);
+            ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
             ctx.fill();
-
-            ctx.restore();
-
-            // 繪製邊框圓
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = '#667eea';
             ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.arc(radius, radius, radius * 0.9, 0, Math.PI * 2);
             ctx.stroke();
         }
 
-        // 旋轉轉盤
-        // 轉盤會記憶上次停止的位置，下一輪旋轉會從該位置開始轉動
-        function spinWheel(duration = 3000, targetIndex = null, isLastSpin = false) {
-            if (items.length === 0) {
-                alert('請先輸入項目');
-                return null;
-            }
+        function updateTextarea() {
+            itemsTextarea.value = items.join('\n');
+        }
 
-            if (isSpinning) {
-                return null;
+        function loadFromTextarea() {
+            const lines = itemsTextarea.value
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0);
+            
+            if (lines.length > 0) {
+                items = lines;
+                drawWheel();
             }
+        }
+
+        function spinWheel() {
+            if (isSpinning || items.length === 0) return;
 
             isSpinning = true;
-            let lastAngle = 0;
+            document.querySelector('.btn-primary').disabled = true;
 
-            // 隨機選擇結果
-            if (targetIndex === null) {
-                targetIndex = Math.floor(Math.random() * items.length);
-            }
+            const spins = Math.floor(Math.random() * 5) + 5; // 5-10 圈
+            const randomAngle = Math.random() * (Math.PI * 2);
+            const totalRotation = spins * Math.PI * 2 + randomAngle;
 
-            // 計算目標角度
-            const sliceAngle = (Math.PI * 2) / items.length;
-            const targetAngle = -(targetIndex * sliceAngle + sliceAngle / 2) + Math.PI / 2;
-
-            // 播放背景樂
-            if (advancedSettings.bgmEnabled && !audioElements.bgm.playing) {
-                audioElements.bgm.loop = true;
-                audioElements.bgm.play().catch(() => {});
-            }
-
-            // 執行旋轉動畫
-            const startRotation = currentRotation;
+            let currentRotation = 0;
+            const duration = 3000; // 3 秒
             const startTime = Date.now();
-            const rotations = 5 + Math.random() * 3;
 
             function animate() {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-
-                // 使用緩動函數
+                
+                // 緩動函數（ease-out）
                 const easeProgress = 1 - Math.pow(1 - progress, 3);
-
-                // 計算旋轉角度
-                currentRotation = startRotation + (rotations * Math.PI * 2 + targetAngle - startRotation) * easeProgress;
-
-                // 觸發轉盤效果音
-                if (advancedSettings.wheelAudioEnabled && audioElements.wheel.src) {
-                    const currentAngle = currentRotation % (Math.PI * 2);
-                    const segmentAngle = (Math.PI * 2) / items.length;
-                    
-                    if (Math.abs(currentAngle - lastAngle) > segmentAngle * 0.5) {
-                        audioElements.wheel.currentTime = 0;
-                        audioElements.wheel.play().catch(() => {});
-                        lastAngle = currentAngle;
-                    }
+                
+                currentRotation = totalRotation * easeProgress;
+                rotation = currentRotation;
+                
+                // 偵測當前指向的選項
+                const normalizedRotation = rotation % (Math.PI * 2);
+                const sliceAngle = (Math.PI * 2) / items.length;
+                const currentTickIndex = Math.floor((Math.PI * 2 - normalizedRotation) / sliceAngle) % items.length;
+                
+                // 當指向新選項時播放 tick 音效
+                if (currentTickIndex !== lastTickIndex && isSpinning) {
+                    lastTickIndex = currentTickIndex;
+                    playTickSound();
                 }
-
+                
                 drawWheel();
 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
                     isSpinning = false;
-                    // 轉盤停止在目標位置，保留此位置供下一輪旋轉使用
-                    currentRotation = targetAngle;
-                    drawWheel();
-                    
-                    // 保存當前位置，以防被意外修改
-                    const savedRotation = currentRotation;
-
-                    // 播放中獎音效
-                    setTimeout(() => {
-                        // 確保角度沒有被修改
-                        currentRotation = savedRotation;
-                        
-                        if (advancedSettings.winAudioEnabled) {
-                            if (isLastSpin && audioElements.bonusWin.src) {
-                                audioElements.bonusWin.currentTime = 0;
-                                audioElements.bonusWin.play().catch(() => {});
-                            } else if (audioElements.normalWin.src) {
-                                audioElements.normalWin.currentTime = 0;
-                                audioElements.normalWin.play().catch(() => {});
-                            }
-                        }
-
-                        addResult(items[targetIndex]);
-
-                        // 移除已抽中的項目
-                        if (advancedSettings.removeSelected) {
-                            items.splice(targetIndex, 1);
-                            colors = generateColors(items.length);
-                            document.getElementById('item-count').textContent = items.length;
-                            // 重要：保持當前的轉盤角度，只重繪項目變化
-                            drawWheel();
-                        }
-                    }, 200);
+                    document.querySelector('.btn-primary').disabled = false;
+                    showResult();
                 }
             }
 
-            animate();
-            return targetIndex;
+            requestAnimationFrame(animate);
         }
 
-        // 手動旋轉一次
-        function manualSpin() {
-            spinWheel(3000, null, false);
-        }
-
-        // 自動抽籤
-        function startAutoSpin() {
-            if (items.length === 0) {
-                alert('請先輸入項目');
-                return;
-            }
-
-            const times = parseInt(document.getElementById('times').value) || 1;
-
-            if (times < 1 || times > 99) {
-                alert('抽籤次數必須在1-99之間');
-                return;
-            }
-
-            // 只有在啟用移除功能時，才重置項目列表和轉盤位置
-            // 這樣做是因為移除功能會改變轉盤的項目數量，必須重新開始
-            if (advancedSettings.removeSelected) {
-                items = [...originalItems];
-                colors = generateColors(items.length);
-                document.getElementById('item-count').textContent = items.length;
-                currentRotation = 0; // 重置轉盤位置到初始狀態（新週期）
-                drawWheel();
-                // 清空之前的結果
-                results = [];
-                displayResults();
-                document.getElementById('total-count').textContent = '0';
-                document.getElementById('progress').style.width = '0%';
-            } else {
-                // 如果不使用移除功能，保持轉盤角度，只清空結果
-                results = [];
-                displayResults();
-                document.getElementById('total-count').textContent = '0';
-                document.getElementById('progress').style.width = '0%';
-            }
-
-            currentSpinCount = 0;
-            totalSpinCount = times;
-            spinMultipleTimes(times);
-        }
-
-        // 連續旋轉多次
-        function spinMultipleTimes(count, index = 0) {
-            if (index >= count) {
-                // 停止背景樂
-                if (audioElements.bgm) {
-                    audioElements.bgm.pause();
-                    audioElements.bgm.currentTime = 0;
-                }
-                return;
-            }
-
-            currentSpinCount = index + 1;
-            const duration = index === count - 1 ? 3000 : 2000;
-            const isLastSpin = index === count - 1;
-            spinWheel(duration, null, isLastSpin);
-
-            setTimeout(() => {
-                spinMultipleTimes(count, index + 1);
-                updateProgress((index + 1) / count);
-            }, duration + 100);
-        }
-
-        // 添加結果
-        function addResult(item) {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('zh-Hant');
-            results.push({ item, time: timeStr, index: results.length + 1 });
-
-            displayResults();
-            document.getElementById('total-count').textContent = results.length;
-        }
-
-        // 顯示結果列表
-        function displayResults() {
-            const resultsDiv = document.getElementById('results');
-
-            if (results.length === 0) {
-                resultsDiv.innerHTML = '<div class="empty-state">還沒有抽籤結果</div>';
-                return;
-            }
-
-            resultsDiv.innerHTML = results
-                .map(
-                    result => `
-                <div class="result-item">
-                    <span class="result-number">#${result.index}</span>
-                    <span class="result-name">${result.item}</span>
-                    <span class="result-time">${result.time}</span>
-                </div>
-            `
-                )
-                .join('');
-
-            // 自動滾動到底部
-            resultsDiv.scrollTop = resultsDiv.scrollHeight;
-        }
-
-        // 更新進度條
-        function updateProgress(progress) {
-            document.getElementById('progress').style.width = progress * 100 + '%';
-        }
-
-        // 清空結果
-        function clearResults() {
-            if (results.length > 0 && confirm('確認清空所有結果？')) {
-                results = [];
-                displayResults();
-                document.getElementById('total-count').textContent = '0';
-                document.getElementById('progress').style.width = '0%';
-                // 重要：清空結果時不重置轉盤位置
-            }
-        }
-
-        // 重置轉盤位置
-        function resetWheelPosition() {
-            if (!isSpinning) {
-                currentRotation = 0;
-                drawWheel();
-            }
-        }
-
-        // 音頻處理函數
-        function handleAudioUpload(elementId) {
-            const input = document.getElementById(elementId);
-            const file = input.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const audioKey = getAudioKey(elementId);
-                    audioElements[audioKey].src = e.target.result;
-                    localStorage.setItem(`wheelTool_${elementId}`, e.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function getAudioKey(elementId) {
-            const mapping = {
-                'wheelAudio': 'wheel',
-                'normalWinAudio': 'normalWin',
-                'bonusWinAudio': 'bonusWin',
-                'bgmAudio': 'bgm'
-            };
-            return mapping[elementId] || 'wheel';
-        }
-
-        function playPreview(elementId) {
-            const audioKey = getAudioKey(elementId);
-            const audio = audioElements[audioKey];
-            if (audio.src) {
-                audio.currentTime = 0;
-                audio.play().catch(() => {});
-            }
-        }
-
-        function resetAudio(elementId) {
-            const input = document.getElementById(elementId);
-            input.value = '';
-            const audioKey = getAudioKey(elementId);
-            audioElements[audioKey].src = '';
-            localStorage.removeItem(`wheelTool_${elementId}`);
-        }
-
-        function resetAllAudio(elementId) {
-            resetAudio(elementId);
-            // 嘗試從預設路徑加載
-            const audioKey = getAudioKey(elementId);
-            const defaultPath = defaultAudioPaths[audioKey];
-            if (defaultPath) {
-                loadAudioFromPath(defaultPath, audioKey);
-            }
-        }
-
-        function loadAudioFromPath(path, audioKey) {
-            // 支持相對路徑和絕對路徑
-            const audio = audioElements[audioKey];
+        function showResult() {
+            const normalizedRotation = rotation % (Math.PI * 2);
+            const sliceAngle = (Math.PI * 2) / items.length;
+            const resultIndex = Math.floor((Math.PI * 2 - normalizedRotation) / sliceAngle) % items.length;
             
-            // 首先嘗試使用 fetch API
-            fetch(path)
-                .then(response => {
-                    if (!response.ok) throw new Error(`Failed to load: ${path}`);
-                    return response.blob();
-                })
-                .then(blob => {
-                    const url = URL.createObjectURL(blob);
-                    audio.src = url;
-                    // 同時保存到 localStorage
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const elementId = Object.keys(defaultAudioPaths).indexOf(audioKey) >= 0 
-                            ? getElementId(audioKey) 
-                            : null;
-                        if (elementId) {
-                            localStorage.setItem(`wheelTool_${elementId}`, e.target.result);
-                        }
-                    };
-                    reader.readAsDataURL(blob);
-                })
-                .catch(error => {
-                    console.log(`無法加載音檔: ${path}`);
-                    // 嘗試直接設置路徑（用於某些瀏覽器）
-                    audio.src = path;
+            const resultSection = document.getElementById('resultSection');
+            const resultText = document.getElementById('resultText');
+            const result = items[resultIndex];
+            resultText.textContent = result;
+            resultSection.classList.add('show');
+            
+            // 添加到紀錄
+            addToHistory(result);
+            continuousSpinCount++;
+            
+            // 判斷是否為連續抽選的最後一次
+            const isLastContinuous = isContinuousSpinning && continuousSpinCount >= continuousSpinTotal;
+            
+            // 播放成功音效
+            playSuccessSound(isLastContinuous);
+            
+            // 如果是連續抽選，檢查是否繼續
+            if (isContinuousSpinning && continuousSpinCount < continuousSpinTotal) {
+                updateContinuousProgress();
+                setTimeout(() => {
+                    spinWheel();
+                }, 3000);
+            } else if (isContinuousSpinning && continuousSpinCount >= continuousSpinTotal) {
+                isContinuousSpinning = false;
+                updateContinuousProgress();
+                document.querySelector('.btn-primary').disabled = false;
+            }
+        }
+
+        function addToHistory(result) {
+            // 每次抽選單獨記錄一筆
+            resultHistory.push({ 
+                result, 
+                timestamp: new Date().toLocaleTimeString() 
+            });
+            
+            // 最多保留 100 筆紀錄
+            if (resultHistory.length > 100) {
+                resultHistory.shift();
+            }
+            
+            updateHistoryDisplay();
+            saveHistoryToStorage();
+        }
+
+        function updateHistoryDisplay() {
+            const historyDiv = document.getElementById('resultHistory');
+            
+            if (resultHistory.length === 0) {
+                historyDiv.innerHTML = '<div style="color: #999; text-align: center; padding: 20px;">尚無紀錄</div>';
+                return;
+            }
+            
+            historyDiv.innerHTML = resultHistory.map((item, index) => `
+                <div class="history-item">
+                    <span>${index + 1}. ${item.result}</span>
+                </div>
+            `).join('');
+            
+            // 自動滾動到底部（最新紀錄）
+            setTimeout(() => {
+                historyDiv.scrollTop = historyDiv.scrollHeight;
+            }, 0);
+        }
+
+        function clearHistory() {
+            if (confirm('確定要清空所有紀錄嗎？')) {
+                resultHistory = [];
+                updateHistoryDisplay();
+                localStorage.removeItem('wheelToolHistory');
+            }
+        }
+
+        function saveHistoryToStorage() {
+            localStorage.setItem('wheelToolHistory', JSON.stringify(resultHistory));
+        }
+
+        function loadHistoryFromStorage() {
+            const stored = localStorage.getItem('wheelToolHistory');
+            if (stored) {
+                try {
+                    resultHistory = JSON.parse(stored);
+                    updateHistoryDisplay();
+                } catch (e) {
+                    console.log('無法載入紀錄');
+                }
+            }
+        }
+
+        function startContinuousSpin() {
+            const countInput = document.getElementById('continuousCount');
+            const count = parseInt(countInput.value) || 0;
+            
+            if (count < 1 || count > 999) {
+                alert('請輸入 1 到 999 之間的數字');
+                return;
+            }
+            
+            isContinuousSpinning = true;
+            continuousSpinCount = 0;
+            continuousSpinTotal = count;
+            lastTickIndex = -1;
+            
+            const progressDiv = document.getElementById('continuousProgress');
+            progressDiv.style.display = 'block';
+            
+            document.querySelector('.btn-primary').disabled = true;
+            spinWheel();
+        }
+
+        function updateContinuousProgress() {
+            const progressDiv = document.getElementById('continuousProgress');
+            progressDiv.textContent = `進度: ${continuousSpinCount}/${continuousSpinTotal}`;
+        }
+
+        // 音效管理
+        const bgMusicAudio = new Audio('Wheel Tool Sound/Wheel Background Music.wav');
+        const tickSoundAudio = new Audio('Wheel Tool Sound/Wheel Tool Sound.wav');
+        const successSoundAudio = new Audio('Wheel Tool Sound/Success Ding.wav');
+        const bonusWinAudio = new Audio('Wheel Tool Sound/Bonus Win.mp3');
+
+        bgMusicAudio.loop = true;
+        bgMusicAudio.volume = 0.5;
+
+        function updateVolume() {
+            const volume = parseInt(document.getElementById('volumeControl').value) / 100;
+            bgMusicAudio.volume = volume;
+            document.getElementById('volumeLabel').textContent = Math.round(volume * 100) + '%';
+        }
+
+        function toggleBackgroundMusic() {
+            const btn = document.getElementById('audioToggle');
+            if (bgMusicAudio.paused) {
+                bgMusicAudio.play().then(() => {
+                    btn.textContent = '🔊 音樂開啟';
+                }).catch(e => {
+                    console.log('Background music play error:', e);
+                    alert('無法播放背景音樂，請檢查音頻文件路徑');
                 });
+            } else {
+                bgMusicAudio.pause();
+                btn.textContent = '🔇 開啟音樂';
+            }
         }
 
-        function getElementId(audioKey) {
-            const mapping = {
-                'wheel': 'wheelAudio',
-                'normalWin': 'normalWinAudio',
-                'bonusWin': 'bonusWinAudio',
-                'bgm': 'bgmAudio'
-            };
-            return mapping[audioKey];
+        function playTickSound() {
+            tickSoundAudio.currentTime = 0;
+            tickSoundAudio.play().catch(e => console.log('tick sound play error:', e));
         }
 
-        function updateAdvancedSettings() {
-            advancedSettings.removeSelected = document.getElementById('removeSelected').checked;
-            advancedSettings.bgmEnabled = document.getElementById('bgmEnabled').checked;
+        function playSuccessSound(isBonus = false) {
+            const audio = isBonus ? bonusWinAudio : successSoundAudio;
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log('success sound play error:', e));
         }
 
         // 初始化
-        window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('items').value = items.join('\n');
-            colors = generateColors(items.length);
-            document.getElementById('item-count').textContent = items.length;
-            drawWheel();
-
-            // 自動加載預設音檔
-            Object.entries(defaultAudioPaths).forEach(([key, path]) => {
-                loadAudioFromPath(path, key);
-            });
-
-            // 快捷鍵
-            document.addEventListener('keydown', event => {
-                if (event.code === 'Space') {
-                    event.preventDefault();
-                    manualSpin();
-                }
-                if (event.code === 'KeyR') {
-                    event.preventDefault();
-                    startAutoSpin();
-                }
-                if (event.code === 'KeyC') {
-                    event.preventDefault();
-                    clearResults();
-                }
-            });
-        });
-
-        // 響應式設計 - 重新繪製
-        window.addEventListener('resize', () => {
-            drawWheel();
-        });
+        window.addEventListener('resize', resizeCanvas);
+        updateTextarea();
+        loadHistoryFromStorage();
+        resizeCanvas();
     </script>
 </body>
 </html>
