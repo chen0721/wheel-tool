@@ -50,12 +50,14 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 30px;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .wheel-section {
             display: flex;
             justify-content: center;
+            position: sticky;
+            top: 20px;
         }
 
         .wheel-container {
@@ -442,6 +444,7 @@
                     }
                 }
                 
+                saveItemsToStorage();
                 drawWheel();
             }
         }
@@ -458,6 +461,7 @@
                 [items[i], items[j]] = [items[j], items[i]];
             }
             
+            saveItemsToStorage();
             updateTextarea();
             drawWheel();
         }
@@ -602,6 +606,44 @@
             }
         }
 
+        function saveItemsToStorage() {
+            const itemsWithColors = items.map(item => {
+                if (itemColors[item]) {
+                    return `${item},${itemColors[item]}`;
+                }
+                return item;
+            });
+            localStorage.setItem('wheelToolItems', JSON.stringify(itemsWithColors));
+            localStorage.setItem('wheelToolItemColors', JSON.stringify(itemColors));
+        }
+
+        function loadItemsFromStorage() {
+            const storedItems = localStorage.getItem('wheelToolItems');
+            const storedColors = localStorage.getItem('wheelToolItemColors');
+            
+            if (storedItems) {
+                try {
+                    const parsedItems = JSON.parse(storedItems);
+                    if (parsedItems.length > 0) {
+                        items = [];
+                        itemColors = storedColors ? JSON.parse(storedColors) : {};
+                        
+                        // 解析項目和顏色
+                        for (let i = 0; i < parsedItems.length; i++) {
+                            const parts = parsedItems[i].split(',');
+                            const itemName = parts[0].trim();
+                            items.push(itemName);
+                        }
+                        
+                        updateTextarea();
+                        drawWheel();
+                    }
+                } catch (e) {
+                    console.log('無法載入選項');
+                }
+            }
+        }
+
         function startContinuousSpin() {
             const countInput = document.getElementById('continuousCount');
             const count = parseInt(countInput.value) || 0;
@@ -645,7 +687,7 @@
             
             // 更新進度和顯示倒計時
             updateContinuousProgress();
-            progressDiv.innerHTML += ` | <span id="countdownNumber">Next draw 5...</span>`;
+            progressDiv.innerHTML += ` <span id="countdownNumber">Next draw 5...</span>`;
             
             countdownInterval = setInterval(() => {
                 countdown--;
@@ -704,7 +746,7 @@
 
         // 初始化
         window.addEventListener('resize', resizeCanvas);
-        updateTextarea();
+        loadItemsFromStorage();
         loadHistoryFromStorage();
         resizeCanvas();
     </script>
