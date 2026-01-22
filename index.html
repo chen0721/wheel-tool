@@ -277,7 +277,7 @@
                     <div id="continuousProgress" style="display: none; margin-top: 10px; font-size: 12px; color: #666;"></div>
                 </div>
 
-                <button class="btn-primary btn-full" onclick="spinWheel()">開始抽選</button>
+                <button class="btn-primary btn-full" onclick="spinWheel()">開始抽選(單次)</button>
 
                 <div class="input-group">
                     <label for="continuousCount">連續抽選</label>
@@ -300,7 +300,10 @@
                     <textarea id="itemsList" placeholder="選項1&#10;選項2&#10;選項3"></textarea>
                 </div>
 
-                <button class="btn-secondary btn-full" onclick="loadFromTextarea()">更新選項</button>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn-secondary" onclick="loadFromTextarea()">更新選項</button>
+                    <button class="btn-secondary" onclick="shuffleItems()">亂序重排</button>
+                </div>
 
                 <div class="info-section">
                     <div class="info-title">💡 使用提示</div>
@@ -308,6 +311,8 @@
                         <li>點擊「開始抽選」開始轉盤</li>
                         <li>可在列表中編輯選項，點擊「更新選項」刷新</li>
                         <li>轉盤停止時，指針指向的就是結果</li>
+                        <li>選項後可加逗號和16進制色碼指定顏色，如：選項1,#FF6B6B</li>
+                        <li>連續抽選時會顯示倒計時（Next draw 5...）</li>
                     </ul>
                 </div>
             </div>
@@ -330,6 +335,7 @@
         }
 
         let items = ['選項1', '選項2', '選項3'];
+        let itemColors = {}; // 儲存自定義顏色
         let isSpinning = false;
         let rotation = 0;
         let resultHistory = [];
@@ -337,6 +343,7 @@
         let continuousSpinCount = 0;
         let continuousSpinTotal = 0;
         let lastTickIndex = -1;
+        let countdownInterval = null;
 
         // 顏色列表
         const colors = [
@@ -347,6 +354,10 @@
         ];
 
         function getColor(index) {
+            const itemName = items[index];
+            if (itemColors[itemName]) {
+                return itemColors[itemName];
+            }
             return colors[index % colors.length];
         }
 
@@ -383,7 +394,8 @@
                 ctx.textAlign = 'right';
                 ctx.fillStyle = '#fff';
                 ctx.font = 'bold 14px sans-serif';
-                ctx.fillText(items[i], radius - 30, 5);
+                const displayText = items[i].split(',')[0].trim(); // 只顯示選項名稱，不顯示色碼
+                ctx.fillText(displayText, radius - 30, 5);
                 ctx.restore();
             }
 
@@ -398,7 +410,12 @@
         }
 
         function updateTextarea() {
-            itemsTextarea.value = items.join('\n');
+            itemsTextarea.value = items.map(item => {
+                if (itemColors[item]) {
+                    return `${item},${itemColors[item]}`;
+                }
+                return item;
+            }).join('\n');
         }
 
         function loadFromTextarea() {
@@ -409,8 +426,40 @@
             
             if (lines.length > 0) {
                 items = lines;
+                itemColors = {}; // 重置顏色
+                
+                // 解析自定義顏色
+                for (let i = 0; i < items.length; i++) {
+                    const parts = items[i].split(',');
+                    const itemName = parts[0].trim();
+                    const color = parts[1] ? parts[1].trim() : null;
+                    
+                    items[i] = itemName; // 只保留項目名稱
+                    
+                    // 驗證並保存顏色
+                    if (color && /^#[0-9A-Fa-f]{6}$/.test(color)) {
+                        itemColors[itemName] = color;
+                    }
+                }
+                
                 drawWheel();
             }
+        }
+
+        function shuffleItems() {
+            if (items.length === 0) {
+                alert('請先輸入選項');
+                return;
+            }
+            
+            // Fisher-Yates 洗牌算法
+            for (let i = items.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [items[i], items[j]] = [items[j], items[i]];
+            }
+            
+            updateTextarea();
+            drawWheel();
         }
 
         function spinWheel() {
@@ -485,10 +534,7 @@
             
             // 如果是連續抽選，檢查是否繼續
             if (isContinuousSpinning && continuousSpinCount < continuousSpinTotal) {
-                updateContinuousProgress();
-                setTimeout(() => {
-                    spinWheel();
-                }, 3000);
+                startCountdown();
             } else if (isContinuousSpinning && continuousSpinCount >= continuousSpinTotal) {
                 isContinuousSpinning = false;
                 updateContinuousProgress();
@@ -565,6 +611,12 @@
                 return;
             }
             
+            // 清除之前的倒計時
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            
             isContinuousSpinning = true;
             continuousSpinCount = 0;
             continuousSpinTotal = count;
@@ -580,6 +632,33 @@
         function updateContinuousProgress() {
             const progressDiv = document.getElementById('continuousProgress');
             progressDiv.textContent = `進度: ${continuousSpinCount}/${continuousSpinTotal}`;
+        }
+
+        function startCountdown() {
+            const progressDiv = document.getElementById('continuousProgress');
+            let countdown = 5;
+            
+            // 清除之前的倒計時
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            
+            // 更新進度和顯示倒計時
+            updateContinuousProgress();
+            progressDiv.innerHTML += ` | <span id="countdownNumber">Next draw 5...</span>`;
+            
+            countdownInterval = setInterval(() => {
+                countdown--;
+                const countdownSpan = document.getElementById('countdownNumber');
+                if (countdown > 0) {
+                    countdownSpan.textContent = `Next draw ${countdown}...`;
+                } else {
+                    clearInterval(countdownInterval);
+                    countdownInterval = null;
+                    countdownSpan.remove();
+                    spinWheel();
+                }
+            }, 1000);
         }
 
         // 音效管理
